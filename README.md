@@ -1,11 +1,16 @@
 # DanaTech website
 
-Static company and game website for [maketh.au](https://maketh.au).
+Static company, service and game website for [maketh.au](https://maketh.au).
 
 ## Routes
 
-- `/en/`: English company website
+- `/`: English company website
+- `/en/`: compatibility redirect to the English home
 - `/zh/`: Simplified Chinese company website
+- `/services/web-design-brisbane/`: English fixed-price website service
+- `/services/app-development-brisbane/`: English React Native app service
+- `/services/ai-receptionist-brisbane/`: English AI receptionist service
+- `/zh/services/*/`: Simplified Chinese service-page counterparts
 - `/privacy/`: DanaTech privacy policy
 - `/games/little-tower-defence/`: Little Tower Defence game page
 

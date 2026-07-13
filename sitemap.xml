@@ -2,26 +2,60 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://maketh.au/</loc>
-    <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/en/" />
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/" />
-  </url>
-  <url>
-    <loc>https://maketh.au/en/</loc>
-    <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/en/" />
+    <lastmod>2026-07-13</lastmod>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/" />
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/" />
   </url>
   <url>
     <loc>https://maketh.au/zh/</loc>
-    <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/en/" />
+    <lastmod>2026-07-13</lastmod>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/" />
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/" />
   </url>
   <url>
-    <loc>https://maketh.au/privacy/</loc>
+    <loc>https://maketh.au/services/web-design-brisbane/</loc>
+    <lastmod>2026-07-13</lastmod>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/services/web-design-brisbane/" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/services/web-design-brisbane/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/services/web-design-brisbane/" />
   </url>
   <url>
-    <loc>https://maketh.au/games/little-tower-defence/</loc>
+    <loc>https://maketh.au/zh/services/web-design-brisbane/</loc>
+    <lastmod>2026-07-13</lastmod>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/services/web-design-brisbane/" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/services/web-design-brisbane/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/services/web-design-brisbane/" />
   </url>
+  <url>
+    <loc>https://maketh.au/services/app-development-brisbane/</loc>
+    <lastmod>2026-07-13</lastmod>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/services/app-development-brisbane/" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/services/app-development-brisbane/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/services/app-development-brisbane/" />
+  </url>
+  <url>
+    <loc>https://maketh.au/zh/services/app-development-brisbane/</loc>
+    <lastmod>2026-07-13</lastmod>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/services/app-development-brisbane/" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/services/app-development-brisbane/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/services/app-development-brisbane/" />
+  </url>
+  <url>
+    <loc>https://maketh.au/services/ai-receptionist-brisbane/</loc>
+    <lastmod>2026-07-13</lastmod>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/services/ai-receptionist-brisbane/" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/services/ai-receptionist-brisbane/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/services/ai-receptionist-brisbane/" />
+  </url>
+  <url>
+    <loc>https://maketh.au/zh/services/ai-receptionist-brisbane/</loc>
+    <lastmod>2026-07-13</lastmod>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/services/ai-receptionist-brisbane/" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/services/ai-receptionist-brisbane/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/services/ai-receptionist-brisbane/" />
+  </url>
+  <url><loc>https://maketh.au/privacy/</loc></url>
+  <url><loc>https://maketh.au/games/little-tower-defence/</loc></url>
 </urlset>

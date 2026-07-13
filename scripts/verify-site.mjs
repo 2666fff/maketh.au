@@ -8,6 +8,12 @@ const requiredPages = [
   '502.html',
   'en/index.html',
   'zh/index.html',
+  'services/web-design-brisbane/index.html',
+  'services/app-development-brisbane/index.html',
+  'services/ai-receptionist-brisbane/index.html',
+  'zh/services/web-design-brisbane/index.html',
+  'zh/services/app-development-brisbane/index.html',
+  'zh/services/ai-receptionist-brisbane/index.html',
   'privacy/index.html',
   'games/little-tower-defence/index.html'
 ];
@@ -15,6 +21,7 @@ const requiredAssets = [
   'assets/danatech/company.css',
   'assets/danatech/company.js',
   'assets/danatech/danatech-game-og.webp',
+  'assets/danatech/danatech-services-og.png',
   'assets/danatech/danatech-icon.png',
   'assets/danatech/error.css',
   'assets/danatech/xxtf-feature.webp',
@@ -69,11 +76,66 @@ for (const relativePath of requiredPages.slice(1)) {
   }
 }
 
+const indexableCompanyPages = [
+  'index.html',
+  'zh/index.html',
+  'services/web-design-brisbane/index.html',
+  'services/app-development-brisbane/index.html',
+  'services/ai-receptionist-brisbane/index.html',
+  'zh/services/web-design-brisbane/index.html',
+  'zh/services/app-development-brisbane/index.html',
+  'zh/services/ai-receptionist-brisbane/index.html'
+];
+
+for (const relativePath of indexableCompanyPages) {
+  const html = readFileSync(join(root, relativePath), 'utf8');
+  const h1Count = [...html.matchAll(/<h1\b/gi)].length;
+  const description = html.match(/<meta name="description" content="([^"]+)"/i)?.[1] || '';
+  const minimumDescriptionLength = relativePath.startsWith('zh/') ? 30 : 80;
+  if (h1Count !== 1) failures.push(`${relativePath} must contain exactly one h1, found ${h1Count}`);
+  if (!/<title>[^<]{20,}<\/title>/i.test(html)) failures.push(`${relativePath} needs a descriptive title`);
+  if (description.length < minimumDescriptionLength) failures.push(`${relativePath} needs a useful meta description`);
+  if (!/<link rel="canonical" href="https:\/\/maketh\.au\//i.test(html)) failures.push(`${relativePath} needs a maketh.au canonical URL`);
+  if (!html.includes('hreflang="en-AU"') || !html.includes('hreflang="zh-CN"')) {
+    failures.push(`${relativePath} needs reciprocal English and Chinese hreflang links`);
+  }
+  if (/\bR18\b/.test(html)) failures.push(`${relativePath} contains the unrelated R18 navigation label`);
+  if (/470 St Kilda|Registered address/.test(html)) failures.push(`${relativePath} contains an unconfirmed company address`);
+
+  const jsonLdBlocks = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi)];
+  if (jsonLdBlocks.length === 0) failures.push(`${relativePath} is missing JSON-LD`);
+  for (const [, json] of jsonLdBlocks) {
+    try {
+      JSON.parse(json);
+    } catch {
+      failures.push(`${relativePath} contains invalid JSON-LD`);
+    }
+  }
+}
+
+for (const relativePath of ['index.html', 'zh/index.html']) {
+  const html = readFileSync(join(root, relativePath), 'utf8');
+  for (const fact of ['$300', '$500']) {
+    if (!html.includes(fact)) failures.push(`${relativePath} is missing confirmed price ${fact}`);
+  }
+  if (!/source code|源码/i.test(html)) failures.push(`${relativePath} is missing the source-code handover promise`);
+}
+
+const legacyEnglish = readFileSync(join(root, 'en/index.html'), 'utf8');
+if (!legacyEnglish.includes('noindex, follow') || !legacyEnglish.includes('window.location.replace')) {
+  failures.push('en/index.html must remain a noindex compatibility redirect');
+}
+
 const sitemap = readFileSync(join(root, 'sitemap.xml'), 'utf8');
 for (const url of [
   'https://maketh.au/',
-  'https://maketh.au/en/',
   'https://maketh.au/zh/',
+  'https://maketh.au/services/web-design-brisbane/',
+  'https://maketh.au/services/app-development-brisbane/',
+  'https://maketh.au/services/ai-receptionist-brisbane/',
+  'https://maketh.au/zh/services/web-design-brisbane/',
+  'https://maketh.au/zh/services/app-development-brisbane/',
+  'https://maketh.au/zh/services/ai-receptionist-brisbane/',
   'https://maketh.au/privacy/',
   'https://maketh.au/games/little-tower-defence/'
 ]) {

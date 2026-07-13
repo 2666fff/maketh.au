@@ -4,6 +4,8 @@ import { extname, join, resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const requiredPages = [
   'index.html',
+  '404.html',
+  '502.html',
   'en/index.html',
   'zh/index.html',
   'privacy/index.html',
@@ -14,6 +16,7 @@ const requiredAssets = [
   'assets/danatech/company.js',
   'assets/danatech/danatech-game-og.webp',
   'assets/danatech/danatech-icon.png',
+  'assets/danatech/error.css',
   'assets/danatech/xxtf-feature.webp',
   'assets/danatech/xxtf-hero.webp',
   'assets/danatech/xxtf-hero-mobile.webp',

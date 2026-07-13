@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="DanaTech Privacy Policy for mobile games, web games, websites, applications, accounts, support, analytics, ads, and related online services.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0a111f">
+  <link rel="canonical" href="https://maketh.au/privacy/">
+  <link rel="icon" type="image/png" href="/assets/danatech/danatech-icon.png">
+  <link rel="apple-touch-icon" href="/assets/danatech/danatech-icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Privacy Policy | DanaTech">
+  <meta property="og:description" content="Privacy Policy for DanaTech mobile games, web games, apps, websites, accounts, support, analytics, ads, and related online services.">
+  <meta property="og:url" content="https://maketh.au/privacy/">
+  <title>Privacy Policy | DanaTech</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      color-scheme: dark;
+      --bg: #0a111f;
+      --surface: #101827;
+      --panel: #142033;
+      --line: rgba(153, 177, 217, .18);
+      --text: #edf3ff;
+      --muted: #9cabca;
+      --soft: #cbd6ec;
+      --accent: #e2b855;
+      --green: #6ac7a8;
+      --white: #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+    a { color: inherit; text-decoration: none; }
+    p { margin: 0; }
+    ul { margin: 0; padding-left: 1.2rem; }
+    li { margin: 8px 0; }
+    .wrap { width: min(980px, calc(100% - 32px)); margin: 0 auto; }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: rgba(10, 17, 31, .92);
+      backdrop-filter: blur(18px);
+    }
+    .nav-inner {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 850;
+    }
+    .brand img {
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 720;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .hero {
+      padding: 72px 0 48px;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(20, 32, 51, .62), transparent 74%),
+        var(--bg);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 26px;
+      height: 1px;
+      background: currentColor;
+      opacity: .72;
+    }
+    h1 {
+      max-width: 840px;
+      margin: 18px 0 16px;
+      color: var(--white);
+      font-size: clamp(38px, 6vw, 68px);
+      line-height: 1.06;
+      letter-spacing: 0;
+    }
+    .lead {
+      max-width: 760px;
+      color: var(--soft);
+      font-size: 18px;
+    }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .pill {
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0 10px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, .04);
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    main { padding: 46px 0 72px; }
+    .grid {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 34px;
+      align-items: start;
+    }
+    .toc {
+      position: sticky;
+      top: 88px;
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(16, 24, 39, .72);
+    }
+    .toc a {
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      border-radius: 6px;
+      padding: 0 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 720;
+    }
+    .toc a:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, .05);
+    }
+    .policy {
+      display: grid;
+      gap: 18px;
+    }
+    section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(16, 24, 39, .74);
+      padding: 24px;
+    }
+    h2 {
+      margin: 0 0 12px;
+      color: var(--white);
+      font-size: 24px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 18px 0 8px;
+      color: var(--soft);
+      font-size: 17px;
+      letter-spacing: 0;
+    }
+    .notice {
+      border-left: 3px solid var(--green);
+      padding: 12px 14px;
+      background: rgba(106, 199, 168, .08);
+      color: var(--soft);
+    }
+    .contact-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .contact-row {
+      display: grid;
+      grid-template-columns: 132px minmax(0, 1fr);
+      gap: 12px;
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+    }
+    .contact-row:first-child { border-top: 0; }
+    .contact-row dt {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 820;
+    }
+    .contact-row dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+      font-weight: 760;
+    }
+    .contact-row a { color: var(--accent); }
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 26px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .footer-links {
+      display: flex;
+      gap: 16px;
+    }
+    .footer-links a:hover { color: var(--text); }
+
+    @media (max-width: 760px) {
+      .nav-inner { align-items: flex-start; flex-direction: column; padding: 14px 0; }
+      .nav-links { flex-wrap: wrap; }
+      .hero { padding: 48px 0 36px; }
+      .grid { grid-template-columns: 1fr; }
+      .toc { position: static; }
+      section { padding: 20px; }
+      .contact-row { grid-template-columns: 1fr; gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="/">
+        <img src="/assets/danatech/danatech-icon.png" alt="DanaTech">
+        <span>DanaTech</span>
+      </a>
+      <nav class="nav-links" aria-label="Privacy navigation">
+        <a href="/">Company</a>
+        <a href="#deletion">Delete Account</a>
+        <a href="mailto:admin@maketh.au">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow">Privacy Policy</span>
+      <h1>Privacy Policy</h1>
+      <p class="lead">This Privacy Policy explains how DanaTech collects, uses, shares, protects, and deletes data for our mobile games, web games, websites, applications, accounts, customer support, analytics, advertising, and related online services.</p>
+      <div class="meta" aria-label="Policy summary">
+        <span class="pill">Effective date: July 8, 2026</span>
+        <span class="pill">Developer: DanaTech</span>
+        <span class="pill">Applies to DanaTech games, apps, and web services</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="wrap">
+    <div class="grid">
+      <nav class="toc" aria-label="Table of contents">
+        <a href="#scope">Scope</a>
+        <a href="#data">Data We Collect</a>
+        <a href="#use">How We Use Data</a>
+        <a href="#sharing">Sharing</a>
+        <a href="#third-party">Third Parties</a>
+        <a href="#security">Security</a>
+        <a href="#retention">Retention</a>
+        <a href="#deletion">Account Deletion</a>
+        <a href="#choices">Your Choices</a>
+        <a href="#children">Children</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="policy">
+        <section id="scope">
+          <h2>1. Scope</h2>
+          <p>This Privacy Policy applies to DanaTech products and services that link to this page, including mobile games, web games, mobile applications, websites, events, online features, player accounts, customer support, analytics, advertising, payment support, and related services. Individual products may include additional notices where required by platform rules or local law.</p>
+        </section>
+
+        <section id="data">
+          <h2>2. Data We Collect</h2>
+          <h3>Account and profile data</h3>
+          <ul>
+            <li>Account name, display name, email address, password hash, authentication tokens, account ID, user ID, profile settings, and other information you choose to provide.</li>
+            <li>Age, country, language, or region information when needed for legal compliance, age-appropriate experiences, localization, fraud prevention, or platform requirements.</li>
+          </ul>
+
+          <h3>Game and app activity data</h3>
+          <ul>
+            <li>Gameplay progress, scores, rankings, achievements, virtual items, game currency, inventory, saved settings, session activity, event participation, and feature usage.</li>
+            <li>Messages, usernames, avatars, user-generated content, reports, moderation records, or social interactions if a product includes chat, community, leaderboard, guild, sharing, or multiplayer features.</li>
+          </ul>
+
+          <h3>Device, technical, and log data</h3>
+          <ul>
+            <li>Device model, operating system, app version, browser type, IP address, approximate location derived from IP address, language, time zone, network status, crash logs, diagnostic logs, performance data, and security events.</li>
+            <li>Device identifiers, advertising identifiers, installation identifiers, cookies, local storage, SDK identifiers, and similar technologies where permitted by platform settings and applicable law.</li>
+          </ul>
+
+          <h3>Purchases, ads, and support data</h3>
+          <ul>
+            <li>In-app purchase records, order identifiers, product identifiers, purchase status, refund status, subscription status, and platform receipts. Payment card details are normally processed by app stores or payment providers and are not collected directly by us.</li>
+            <li>Advertising events such as ad impressions, clicks, frequency, campaign attribution, and fraud-prevention signals where a game or app uses ads.</li>
+            <li>Support requests, contact details, screenshots, attachments, device information, and conversation history that you send to us.</li>
+          </ul>
+        </section>
+
+        <section id="use">
+          <h2>3. How We Use Data</h2>
+          <ul>
+            <li>Provide, operate, maintain, and improve our games, apps, websites, accounts, online features, and customer support.</li>
+            <li>Save progress, sync accounts, operate leaderboards, achievements, events, multiplayer or community features, and deliver product updates.</li>
+            <li>Process purchases, subscriptions, refunds, virtual items, rewards, promotions, and related customer service requests.</li>
+            <li>Analyze product performance, fix bugs, prevent crashes, improve usability, balance game content, and understand aggregate usage trends.</li>
+            <li>Show, measure, limit, personalize, or improve advertising and marketing where allowed by your settings, consent choices, platform rules, and applicable law.</li>
+            <li>Protect users, products, and services against cheating, fraud, abuse, spam, security incidents, unauthorized access, and violations of our terms.</li>
+            <li>Comply with legal obligations, platform policies, tax, accounting, consumer protection, safety, dispute resolution, and lawful requests.</li>
+          </ul>
+        </section>
+
+        <section id="sharing">
+          <h2>4. How We Share Data</h2>
+          <p>We do not sell personal information. We may share data only when it is necessary for the purposes described in this Policy:</p>
+          <ul>
+            <li>With service providers that host infrastructure, store data, deliver content, send email, provide analytics, crash reporting, fraud prevention, customer support, moderation, advertising, or other operational services.</li>
+            <li>With app stores, payment processors, advertising partners, analytics providers, attribution providers, and platform services when needed to provide app features, purchases, ads, measurement, or compliance.</li>
+            <li>With other users when a feature is designed to be public or social, such as display names, avatars, rankings, leaderboards, chat messages, guild information, multiplayer actions, or user-generated content.</li>
+            <li>With authorities, courts, regulators, professional advisers, or affected parties when required by law or when necessary to protect rights, safety, security, users, or our services.</li>
+            <li>In connection with a business transaction such as a merger, acquisition, financing, restructuring, or transfer of assets, subject to appropriate safeguards.</li>
+          </ul>
+        </section>
+
+        <section id="third-party">
+          <h2>5. Third-Party Services</h2>
+          <p>Our products may use third-party SDKs, stores, networks, and tools. Depending on the specific product, these may include Google Play services, Apple App Store services, cloud hosting providers, analytics tools, crash reporting tools, advertising networks, attribution services, anti-fraud services, payment processors, content delivery networks, and customer support tools.</p>
+          <p class="notice">Third-party services may process data under their own privacy policies. Your device settings, platform privacy settings, advertising ID settings, app permissions, and consent choices may affect how these services collect and use data.</p>
+        </section>
+
+        <section id="security">
+          <h2>6. Data Security</h2>
+          <p>We use reasonable technical and organizational measures designed to protect data, including HTTPS transmission, access controls, least-privilege practices, password hashing where passwords are used, monitoring, backups, and service isolation. No internet service can be guaranteed to be completely secure, but we work to reduce risk and respond to security issues when they are identified.</p>
+        </section>
+
+        <section id="retention">
+          <h2>7. Data Retention</h2>
+          <ul>
+            <li>Account, progress, purchase, entitlement, and support data may be retained while your account is active or as long as needed to provide the product.</li>
+            <li>Analytics, diagnostic, security, and log data may be retained for a limited period for troubleshooting, product improvement, fraud prevention, and security.</li>
+            <li>Records may be retained longer where required for legal, tax, accounting, dispute, refund, safety, anti-cheat, fraud prevention, or platform compliance reasons.</li>
+            <li>When data is no longer needed, we delete it, anonymize it, aggregate it, or otherwise de-identify it according to our operational and legal requirements.</li>
+          </ul>
+        </section>
+
+        <section id="deletion">
+          <h2>8. Account and Data Deletion</h2>
+          <p>If a DanaTech game, app, or web service allows account creation, you may request account deletion by emailing <a href="mailto:admin@maketh.au">admin@maketh.au</a>. Please use the subject line "Account Deletion Request" and include the account ID, username, email address, game or app name, and any information reasonably needed to verify that you control the account.</p>
+          <h3>What we delete</h3>
+          <p>After verification, we will delete or disable the account and delete associated personal data that is no longer needed to provide services or meet legal, security, accounting, fraud prevention, dispute, platform, or safety obligations.</p>
+          <h3>What may be retained</h3>
+          <p>Some records may be retained for a limited period where necessary, including purchase receipts, refund records, tax records, moderation logs, anti-cheat records, security logs, abuse reports, or records required by law. We may also retain aggregated or de-identified data that no longer identifies you.</p>
+        </section>
+
+        <section id="choices">
+          <h2>9. Your Choices and Rights</h2>
+          <ul>
+            <li>You may request access, correction, deletion, or restriction of personal data by contacting us.</li>
+            <li>You can use platform controls to manage app permissions, notifications, cookies, advertising identifiers, personalized ads, and other privacy settings.</li>
+            <li>You may uninstall our apps or stop using our websites and services at any time.</li>
+            <li>If a product offers in-app privacy controls, you can use those controls to manage available choices for that product.</li>
+          </ul>
+        </section>
+
+        <section id="children">
+          <h2>10. Children's Privacy</h2>
+          <p>Our products are intended for the audience rating, age range, and store listing shown for each specific game or app. We do not knowingly collect personal data from children below the age required by applicable law without appropriate consent. If you believe a child has provided personal data without the required consent, please contact us and we will take appropriate action.</p>
+        </section>
+
+        <section id="international">
+          <h2>11. International Transfers</h2>
+          <p>DanaTech and our service providers may process data in countries or regions other than where you live. When we transfer data internationally, we use reasonable safeguards required by applicable law and platform policy.</p>
+        </section>
+
+        <section id="changes">
+          <h2>12. Changes to This Policy</h2>
+          <p>We may update this Privacy Policy from time to time. When we make changes, we will update the effective date on this page. If changes are material, we may provide additional notice through our websites, apps, store listings, or other reasonable methods.</p>
+        </section>
+
+        <section id="contact">
+          <h2>13. Contact Us</h2>
+          <p>If you have questions about this Privacy Policy, data safety, privacy rights, account deletion, or a specific DanaTech game, app, or website, contact us:</p>
+          <dl class="contact-list">
+            <div class="contact-row">
+              <dt>Developer</dt>
+              <dd>DanaTech</dd>
+            </div>
+            <div class="contact-row">
+              <dt>Email</dt>
+              <dd><a href="mailto:admin@maketh.au">admin@maketh.au</a></dd>
+            </div>
+            <div class="contact-row">
+              <dt>Policy URL</dt>
+              <dd><a href="https://maketh.au/privacy/">https://maketh.au/privacy/</a></dd>
+            </div>
+          </dl>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>(c) 2026 DanaTech. Privacy Policy for DanaTech games, apps, and web services.</span>
+      <div class="footer-links">
+        <a href="/">Company</a>
+        <a href="mailto:admin@maketh.au">Contact</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

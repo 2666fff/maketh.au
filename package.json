@@ -1,0 +1,14 @@
+{
+  "name": "maketh-au",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DanaTech company and game website",
+  "type": "module",
+  "scripts": {
+    "serve": "node scripts/serve.mjs",
+    "test": "node scripts/verify-site.mjs"
+  },
+  "engines": {
+    "node": ">=18.19.0"
+  }
+}

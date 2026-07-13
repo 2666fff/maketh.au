@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://maketh.au/sitemap.xml
+Host: maketh.au

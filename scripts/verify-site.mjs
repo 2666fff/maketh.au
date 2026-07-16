@@ -136,12 +136,20 @@ const websiteSalesPages = [
   'zh/services/web-design-brisbane/index.html'
 ];
 
+const majorAustralianCities = [
+  'Brisbane', 'Sydney', 'Melbourne', 'Perth', 'Adelaide', 'Canberra', 'Hobart', 'Darwin',
+  'Gold Coast', 'Sunshine Coast', 'Newcastle', 'Wollongong', 'Geelong', 'Toowoomba', 'Cairns', 'Townsville'
+];
+
 for (const relativePath of websiteSalesPages) {
   const html = readFileSync(join(root, relativePath), 'utf8');
-  for (const fact of ['$299', '$399', 'Sunnybank', 'Eight Mile Plains']) {
+  for (const fact of ['$299', '$399', 'Mount Gravatt', 'Sunnybank', 'Eight Mile Plains', ...majorAustralianCities]) {
     if (!html.includes(fact)) failures.push(`${relativePath} is missing website sales fact ${fact}`);
   }
   if (!/Australia|全澳/.test(html)) failures.push(`${relativePath} is missing Australia-wide service coverage`);
+  if (!/meetings? (?:across|anywhere in) Brisbane|Brisbane[^<]{0,40}(?:meeting|面谈)|整个 Brisbane/i.test(html)) {
+    failures.push(`${relativePath} is missing Brisbane-wide meeting coverage`);
+  }
   if (!/10\s+(?:content\s+)?pages|10\s*页/i.test(html) || !/30\s+(?:content\s+)?pages|30\s*页/i.test(html)) {
     failures.push(`${relativePath} is missing the confirmed 10-page and 30-page package limits`);
   }
@@ -151,17 +159,17 @@ for (const relativePath of websiteSalesPages) {
 
 for (const relativePath of ['index.html', 'services/web-design-brisbane/index.html']) {
   const html = readFileSync(join(root, relativePath), 'utf8');
-  if (!/affordable web design|cheap web (?:design|development)/i.test(html)) {
-    failures.push(`${relativePath} is missing affordable or cheap web design Brisbane language`);
+  if (!/cheapest (?:web design|website (?:packages|development)).*Brisbane|cheapest web design Brisbane/is.test(html)) {
+    failures.push(`${relativePath} is missing the cheapest web design Brisbane target phrase`);
   }
-  if (!/business and personal|individuals and businesses/i.test(html)) {
+  if (!/business and personal|personal and business|individuals and businesses/i.test(html)) {
     failures.push(`${relativePath} is missing business and personal customer language`);
   }
 }
 
 for (const relativePath of ['zh/index.html', 'zh/services/web-design-brisbane/index.html']) {
   const html = readFileSync(join(root, relativePath), 'utf8');
-  for (const phrase of ['布里斯班便宜网页开发', '商务及个人网站', 'Maketh']) {
+  for (const phrase of ['布里斯班最便宜网页开发', '商务及个人网站', 'Maketh']) {
     if (!html.includes(phrase)) failures.push(`${relativePath} is missing Chinese SEO phrase ${phrase}`);
   }
 }

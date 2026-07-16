@@ -2575,6 +2575,52 @@ footer {
   font-size: 12px;
 }
 
+.city-coverage {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 18px 28px;
+  align-items: start;
+  margin-top: 38px;
+  padding: 28px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.city-coverage > span {
+  color: var(--teal-dark);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.city-coverage ul {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  list-style: none;
+}
+
+.city-coverage li {
+  min-width: 0;
+  padding: 9px 11px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+  font-weight: 760;
+  overflow-wrap: anywhere;
+}
+
+.city-coverage > p {
+  grid-column: 2;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2884,6 +2930,14 @@ footer {
   .service-area-grid article {
     min-height: 0;
   }
+
+  .city-coverage {
+    grid-template-columns: 1fr;
+  }
+
+  .city-coverage > p {
+    grid-column: 1;
+  }
 }
 
 @media (max-width: 680px) {
@@ -3037,6 +3091,10 @@ footer {
 
   .service-package-card > a {
     margin-top: 28px;
+  }
+
+  .city-coverage ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .feature-item {

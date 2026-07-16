@@ -42,6 +42,14 @@ for (const relativePath of [...requiredPages, ...requiredAssets, 'robots.txt', '
   }
 }
 
+const servicesOgImage = readFileSync(join(root, 'assets/danatech/danatech-services-og.png'));
+const pngSignature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+if (!servicesOgImage.subarray(0, 8).equals(pngSignature)) {
+  failures.push('danatech-services-og.png must contain real PNG data');
+} else if (servicesOgImage.readUInt32BE(16) !== 1200 || servicesOgImage.readUInt32BE(20) !== 630) {
+  failures.push('danatech-services-og.png must be 1200x630 pixels');
+}
+
 const publicFiles = walk(root).filter((file) => !isLocalOrRepositoryFile(file));
 const textFiles = publicFiles.filter((file) => ['.css', '.html', '.js', '.json', '.md', '.txt', '.xml'].includes(extname(file)));
 const forbidden = [
@@ -115,10 +123,56 @@ for (const relativePath of indexableCompanyPages) {
 
 for (const relativePath of ['index.html', 'zh/index.html']) {
   const html = readFileSync(join(root, relativePath), 'utf8');
-  for (const fact of ['$300', '$500']) {
+  for (const fact of ['$299', '$399', '$500']) {
     if (!html.includes(fact)) failures.push(`${relativePath} is missing confirmed price ${fact}`);
   }
   if (!/source code|源码/i.test(html)) failures.push(`${relativePath} is missing the source-code handover promise`);
+}
+
+const websiteSalesPages = [
+  'index.html',
+  'zh/index.html',
+  'services/web-design-brisbane/index.html',
+  'zh/services/web-design-brisbane/index.html'
+];
+
+for (const relativePath of websiteSalesPages) {
+  const html = readFileSync(join(root, relativePath), 'utf8');
+  for (const fact of ['$299', '$399', 'Sunnybank', 'Eight Mile Plains']) {
+    if (!html.includes(fact)) failures.push(`${relativePath} is missing website sales fact ${fact}`);
+  }
+  if (!/Australia|全澳/.test(html)) failures.push(`${relativePath} is missing Australia-wide service coverage`);
+  if (!/10\s+(?:content\s+)?pages|10\s*页/i.test(html) || !/30\s+(?:content\s+)?pages|30\s*页/i.test(html)) {
+    failures.push(`${relativePath} is missing the confirmed 10-page and 30-page package limits`);
+  }
+  if (/\$300\b|300\s*澳元/.test(html)) failures.push(`${relativePath} contains the superseded $300 website price`);
+  if (!html.includes('data-reveal=')) failures.push(`${relativePath} is missing scroll-reveal anchors`);
+}
+
+for (const relativePath of ['index.html', 'services/web-design-brisbane/index.html']) {
+  const html = readFileSync(join(root, relativePath), 'utf8');
+  if (!/affordable web design|cheap web (?:design|development)/i.test(html)) {
+    failures.push(`${relativePath} is missing affordable or cheap web design Brisbane language`);
+  }
+  if (!/business and personal|individuals and businesses/i.test(html)) {
+    failures.push(`${relativePath} is missing business and personal customer language`);
+  }
+}
+
+for (const relativePath of ['zh/index.html', 'zh/services/web-design-brisbane/index.html']) {
+  const html = readFileSync(join(root, relativePath), 'utf8');
+  for (const phrase of ['布里斯班便宜网页开发', '商务及个人网站', 'Maketh']) {
+    if (!html.includes(phrase)) failures.push(`${relativePath} is missing Chinese SEO phrase ${phrase}`);
+  }
+}
+
+const companyJs = readFileSync(join(root, 'assets/danatech/company.js'), 'utf8');
+const companyCss = readFileSync(join(root, 'assets/danatech/company.css'), 'utf8');
+if (!companyJs.includes('IntersectionObserver') || !companyJs.includes('prefers-reduced-motion')) {
+  failures.push('company.js needs scroll-triggered motion with a reduced-motion fallback');
+}
+if (!companyCss.includes('.reveal-enabled [data-reveal]') || !companyCss.includes('@media (prefers-reduced-motion: reduce)')) {
+  failures.push('company.css needs reveal styling and a reduced-motion override');
 }
 
 const legacyEnglish = readFileSync(join(root, 'en/index.html'), 'utf8');

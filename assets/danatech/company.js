@@ -7,6 +7,7 @@
   const backToTop = document.getElementById('backToTop');
   const openLabel = toggle.dataset.openLabel || 'Open navigation';
   const closeLabel = toggle.dataset.closeLabel || 'Close navigation';
+  const revealTargets = [...document.querySelectorAll('[data-reveal]')];
 
   function closeGamesMenu() {
     if (!games || !gamesToggle) return;
@@ -58,11 +59,37 @@
     if (window.innerWidth > 980) closeMenu();
   });
 
-  window.addEventListener('scroll', () => {
-    backToTop.classList.toggle('show', window.scrollY > 560);
-  }, { passive: true });
+  if (revealTargets.length > 0) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  backToTop.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+    revealTargets.forEach((target) => {
+      const delay = Math.min(Math.max(Number(target.dataset.revealDelay) || 0, 0), 400);
+      target.style.setProperty('--reveal-delay', `${delay}ms`);
+    });
+
+    if (!reduceMotion && 'IntersectionObserver' in window) {
+      document.documentElement.classList.add('reveal-enabled');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        });
+      }, { threshold: 0.04, rootMargin: '0px 0px -8% 0px' });
+
+      revealTargets.forEach((target) => observer.observe(target));
+    } else {
+      revealTargets.forEach((target) => target.classList.add('is-visible'));
+    }
+  }
+
+  if (backToTop) {
+    window.addEventListener('scroll', () => {
+      backToTop.classList.toggle('show', window.scrollY > 560);
+    }, { passive: true });
+
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 })();

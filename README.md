@@ -7,6 +7,7 @@ Static company, service and game website for [maketh.au](https://maketh.au).
 - `/`: English company website
 - `/en/`: compatibility redirect to the English home
 - `/zh/`: Simplified Chinese company website
+- `/#projects` and `/zh/#projects`: published projects, currently Little Tower Defence
 - `/services/web-design-brisbane/`: English fixed-price website service
 - `/services/app-development-brisbane/`: English React Native app service
 - `/services/ai-receptionist-brisbane/`: English AI receptionist service
@@ -42,3 +43,5 @@ git -C /www/wwwroot/maketh.au pull --ff-only origin main
 ```
 
 Point the web server document root at `/www/wwwroot/maketh.au`. Sensitive server configuration stays outside this repository.
+
+The root `app-ads.txt` is served as a public text file for the Android app advertising configuration.

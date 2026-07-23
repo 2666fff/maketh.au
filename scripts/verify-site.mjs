@@ -34,8 +34,9 @@ const requiredAssets = [
     `assets/danatech/xxtf/screen-${String(index + 1).padStart(2, '0')}.webp`)
 ];
 
+const requiredPublicFiles = ['robots.txt', 'sitemap.xml', 'app-ads.txt'];
 const failures = [];
-for (const relativePath of [...requiredPages, ...requiredAssets, 'robots.txt', 'sitemap.xml']) {
+for (const relativePath of [...requiredPages, ...requiredAssets, ...requiredPublicFiles]) {
   const absolutePath = join(root, relativePath);
   if (!existsSync(absolutePath) || statSync(absolutePath).size === 0) {
     failures.push(`Missing or empty required file: ${relativePath}`);
@@ -129,6 +130,43 @@ for (const relativePath of ['index.html', 'zh/index.html']) {
   if (!/source code|源码/i.test(html)) failures.push(`${relativePath} is missing the source-code handover promise`);
 }
 
+const projectNavigationChecks = [
+  ['index.html', 'href="#projects">Projects'],
+  ['zh/index.html', 'href="#projects">项目'],
+  ['services/web-design-brisbane/index.html', 'href="/#projects">Projects'],
+  ['services/app-development-brisbane/index.html', 'href="/#projects">Projects'],
+  ['services/ai-receptionist-brisbane/index.html', 'href="/#projects">Projects'],
+  ['zh/services/web-design-brisbane/index.html', 'href="/zh/#projects">项目'],
+  ['zh/services/app-development-brisbane/index.html', 'href="/zh/#projects">项目'],
+  ['zh/services/ai-receptionist-brisbane/index.html', 'href="/zh/#projects">项目']
+];
+
+for (const [relativePath, marker] of projectNavigationChecks) {
+  const html = readFileSync(join(root, relativePath), 'utf8');
+  if (!html.includes(marker)) failures.push(`${relativePath} is missing the Projects navigation link`);
+}
+
+const englishHome = readFileSync(join(root, 'index.html'), 'utf8');
+const chineseHome = readFileSync(join(root, 'zh/index.html'), 'utf8');
+if (!englishHome.includes('<section id="projects"') || !englishHome.includes('Get it on Google Play')) {
+  failures.push('index.html is missing the published Projects section or Google Play link');
+}
+if (!chineseHome.includes('<section id="projects"') || !chineseHome.includes('Google Play 下载')) {
+  failures.push('zh/index.html is missing the published 项目 section or Google Play link');
+}
+
+const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.dana.xxtf';
+const gamePage = readFileSync(join(root, 'games/little-tower-defence/index.html'), 'utf8');
+if (!gamePage.includes(playStoreUrl)) failures.push('Little Tower Defence page is missing the Google Play URL');
+if (/即将上线|正在准备 Google Play 上线/.test(gamePage)) {
+  failures.push('Little Tower Defence page still contains pre-release copy');
+}
+
+const adsTxt = readFileSync(join(root, 'app-ads.txt'), 'utf8').trim();
+if (adsTxt !== 'google.com, pub-3690130446613985, DIRECT, f08c47fec0942fa0') {
+  failures.push('app-ads.txt does not contain the expected publisher declaration');
+}
+
 const websiteSalesPages = [
   'index.html',
   'zh/index.html',
@@ -208,7 +246,7 @@ if (failures.length > 0) {
   console.error(failures.map((failure) => `- ${failure}`).join('\n'));
   process.exitCode = 1;
 } else {
-  console.log(`Verified ${requiredPages.length} pages, ${requiredAssets.length} required assets, local links, branding, and public-content boundaries.`);
+  console.log(`Verified ${requiredPages.length} pages, ${requiredAssets.length} required assets, ${requiredPublicFiles.length} public config files, local links, branding, and public-content boundaries.`);
 }
 
 function walk(directory) {

@@ -1124,6 +1124,12 @@ button {
     grid-template-columns: 1fr 1fr;
   }
 
+  .hero-actions .button {
+    min-width: 0;
+    padding-inline: 10px;
+    text-align: center;
+  }
+
   .feature-grid {
     grid-template-columns: minmax(0, 1fr);
   }

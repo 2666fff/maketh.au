@@ -3,6 +3,8 @@ import { extname, join, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const requiredPages = [
+  'services/affordable-web-design-australia/index.html',
+  'zh/services/affordable-web-design-australia/index.html',
   'index.html',
   '404.html',
   '502.html',
@@ -22,6 +24,7 @@ const requiredPages = [
 ];
 const requiredAssets = [
   'assets/danatech/company.css',
+  'assets/danatech/coverage.css',
   'assets/danatech/company.js',
   'assets/danatech/quote.css', 'assets/danatech/quote.js', 'assets/danatech/admin.js',
   'examples/assets/demo.css', 'examples/assets/demo.js',
@@ -92,6 +95,8 @@ for (const relativePath of requiredPages) {
 }
 
 const indexableCompanyPages = [
+  'services/affordable-web-design-australia/index.html',
+  'zh/services/affordable-web-design-australia/index.html',
   'index.html',
   'zh/index.html',
   'services/web-design-brisbane/index.html',
@@ -108,6 +113,7 @@ for (const relativePath of indexableCompanyPages) {
   const description = html.match(/<meta name="description" content="([^"]+)"/i)?.[1] || '';
   const minimumDescriptionLength = relativePath.startsWith('zh/') ? 30 : 80;
   if (h1Count !== 1) failures.push(`${relativePath} must contain exactly one h1, found ${h1Count}`);
+  if ([...html.matchAll(/<title>/gi)].length !== 1 || /<meta[^>]*<meta/.test(html)) failures.push(`${relativePath} has malformed title or meta markup`);
   if (!/<title>[^<]{20,}<\/title>/i.test(html)) failures.push(`${relativePath} needs a descriptive title`);
   if (description.length < minimumDescriptionLength) failures.push(`${relativePath} needs a useful meta description`);
   if (!/<link rel="canonical" href="https:\/\/maketh\.au\//i.test(html)) failures.push(`${relativePath} needs a maketh.au canonical URL`);
@@ -207,8 +213,8 @@ for (const relativePath of websiteSalesPages) {
 
 for (const relativePath of ['index.html', 'services/web-design-brisbane/index.html']) {
   const html = readFileSync(join(root, relativePath), 'utf8');
-  if (!/cheapest (?:web design|website (?:packages|development)).*Brisbane|cheapest web design Brisbane/is.test(html)) {
-    failures.push(`${relativePath} is missing the cheapest web design Brisbane target phrase`);
+  if (!/cheapest website design for your needs|Maketh.s cheapest/i.test(html)) {
+    failures.push(`${relativePath} is missing qualified lowest-price comparison language`);
   }
   if (!/business and personal|personal and business|individuals and businesses/i.test(html)) {
     failures.push(`${relativePath} is missing business and personal customer language`);
@@ -217,7 +223,7 @@ for (const relativePath of ['index.html', 'services/web-design-brisbane/index.ht
 
 for (const relativePath of ['zh/index.html', 'zh/services/web-design-brisbane/index.html']) {
   const html = readFileSync(join(root, relativePath), 'utf8');
-  for (const phrase of ['布里斯班最便宜网页开发', '商务及个人网站', 'Maketh']) {
+  for (const phrase of ['布里斯班平价网站设计', '商务及个人网站', 'Maketh']) {
     if (!html.includes(phrase)) failures.push(`${relativePath} is missing Chinese SEO phrase ${phrase}`);
   }
 }
@@ -238,6 +244,8 @@ if (!legacyEnglish.includes('noindex, follow') || !legacyEnglish.includes('windo
 
 const sitemap = readFileSync(join(root, 'sitemap.xml'), 'utf8');
 for (const url of [
+  'https://maketh.au/services/affordable-web-design-australia/',
+  'https://maketh.au/zh/services/affordable-web-design-australia/',
   'https://maketh.au/',
   'https://maketh.au/zh/',
   'https://maketh.au/services/web-design-brisbane/',
@@ -250,6 +258,43 @@ for (const url of [
   'https://maketh.au/games/little-tower-defence/'
 ]) {
   if (!sitemap.includes(`<loc>${url}</loc>`)) failures.push(`sitemap.xml is missing ${url}`);
+}
+
+
+const guideRoutes = ['services/affordable-web-design-australia/', 'zh/services/affordable-web-design-australia/'];
+const pageTitles = new Set();
+for (const relativePath of indexableCompanyPages) {
+  const html = readFileSync(join(root, relativePath), 'utf8');
+  const title = html.match(/<title>([^<]+)<\/title>/)?.[1];
+  if (pageTitles.has(title)) failures.push(`${relativePath} repeats another company's page title`);
+  pageTitles.add(title);
+  if (/"openingHours":"Mo-Su 00:00-23:59"/.test(html)) failures.push(`${relativePath} invents 24-hour staffed opening times`);
+}
+for (const route of guideRoutes) {
+  const html = readFileSync(join(root, route, 'index.html'), 'utf8');
+  const canonical = 'https://maketh.au/' + route;
+  if (!html.includes(`rel="canonical" href="${canonical}"`)) failures.push(`${route} has an incorrect canonical`);
+  for (const fact of ['199', '299', '888', 'Home', 'About', 'Product', '.com.au', '.au', 'Sydney', 'Melbourne', 'Perth', 'Western Australia', 'Brisbane', '/examples/starter/', '/examples/business/']) {
+    if (!html.includes(fact)) failures.push(`${route} missing approved package/coverage fact ${fact}`);
+  }
+  const graph = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])['@graph'];
+  for (const type of ['Service', 'Organization', 'BreadcrumbList', 'FAQPage']) {
+    if (!graph.some(node => node['@type'] === type)) failures.push(`${route} missing ${type}`);
+  }
+  const offers = graph.find(node => node['@type'] === 'Service').offers;
+  if (offers.map(offer => offer.price).join(',') !== '199,299,888' || offers.some(offer => offer.priceCurrency !== 'AUD')) failures.push(`${route} incorrect approved prices/currency`);
+  for (const offer of offers) {
+    if (!/Desktop and mobile|电脑版及移动版/.test(offer.description)) failures.push(`${route} offer ${offer.price} missing both device layouts`);
+    if (!html.includes(`id="package-${offer.price}"`) || offer.url !== canonical + '#package-' + offer.price) failures.push(`${route} offer has no visible price anchor`);
+  }
+  const faqs = graph.find(node => node['@type'] === 'FAQPage').mainEntity;
+  for (const faq of faqs) {
+    if (!html.includes(`<summary>${faq.name}</summary><p>${faq.acceptedAnswer.text}</p>`)) failures.push(`${route} FAQ structured data differs from visible answer`);
+  }
+  if (!/not claim to be the cheapest|不声称是全澳最便宜/.test(html)) failures.push(`${route} missing lowest-price comparison qualification`);
+  if (!/email notifications are not included|套餐不包含邮件通知/.test(html)) failures.push(`${route} incorrectly includes email in the 299 package`);
+  if (!/domain quoted separately|域名另行报价/.test(html)) failures.push(`${route} must state the 888 domain boundary`);
+  if (!/other locations are served remotely|其他地区以远程方式服务/.test(html)) failures.push(`${route} missing real location boundary`);
 }
 
 if (failures.length > 0) {

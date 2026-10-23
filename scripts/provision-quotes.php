@@ -12,6 +12,7 @@ foreach ([dirname($options['config']), $options['data'], $options['data'] . '/se
 $password = bin2hex(random_bytes(18));
 $config = ['database' => $options['data'] . '/quotes.sqlite', 'session_dir' => $options['data'] . '/sessions', 'owner_username' => 'owner', 'owner_password_hash' => password_hash($password, PASSWORD_DEFAULT), 'origin' => $options['origin'], 'rate_secret' => bin2hex(random_bytes(32))];
 $config['allowed_origins'] = [$options['origin']];
+$config['notifications'] = ['enabled' => false];
 if ($options['origin'] === 'https://maketh.au') $config['allowed_origins'][] = 'https://www.maketh.au';
 $db = new PDO('sqlite:' . $config['database'], null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 $db->exec('PRAGMA journal_mode = WAL');

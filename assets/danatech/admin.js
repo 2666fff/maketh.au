@@ -2,6 +2,7 @@
   const $ = id => document.getElementById(id);
   let csrf, page = 1, total = 0, rows = [], currentId;
   const statusNames = {new:'New / 待处理', contacted:'Contacted / 已联系', closed:'Closed / 已结束'};
+  const notificationNames = {pending:'Pending / 等待发送',retrying:'Retry scheduled / 等待重试',queued:'Accepted by mail server / 邮件服务器已接收'};
   const date = value => new Date(value).toLocaleString('en-AU', {timeZone:'Australia/Brisbane'});
   function access(authenticated) { $('loginPanel').hidden = authenticated; $('dashboard').hidden = !authenticated; $('logout').hidden = !authenticated; if(!authenticated) { rows=[]; $('quoteRows').replaceChildren(); $('quoteDialog').close(); } }
   async function api(action, method='GET', body) {
@@ -15,6 +16,8 @@
   function node(tag, text, className) { const el=document.createElement(tag); el.textContent=text; if(className) el.className=className; return el; }
   function openDetail(quote) {
     currentId=quote.id; $('quoteDetails').replaceChildren();
+    $('quoteDetails').append(node('dt','Owner notification / 站主通知'),node('dd',quote.notification_status ? notificationNames[quote.notification_status] : 'No notification scheduled / 未安排邮件通知'));
+    if(quote.notification_status) $('quoteDetails').append(node('dt','Send attempts / 发送次数'),node('dd',String(quote.notification_attempts)));
     for(const [key,value] of [['Reference',quote.id],['Name',quote.name],['Email',quote.email],['Phone',quote.phone || '—'],['Business',quote.business || '—'],['Package',quote.package],['Source',quote.source],['Received',date(quote.created_at)],['Updated',date(quote.updated_at)]]) $('quoteDetails').append(node('dt',key),node('dd',value));
     $('quoteMessage').textContent=quote.message; $('updateForm').elements.status.value=quote.status; $('updateForm').elements.notes.value=quote.notes; $('detailFeedback').textContent=''; $('quoteDialog').showModal();
   }
@@ -27,6 +30,7 @@
     rows.forEach(quote=>{
       const tr=node('tr',''), customer=node('td',quote.name); customer.append(node('small',quote.email));
       const status=node('td',''); status.append(node('span',statusNames[quote.status],'status-badge'));
+      if(quote.notification_status) status.append(node('small',notificationNames[quote.notification_status]));
       const action=node('td',''), button=node('button','View / 查看','row-button'); button.type='button'; button.addEventListener('click',()=>openDetail(quote)); action.append(button);
       tr.append(customer,node('td',/^\d+$/.test(quote.package)?'$'+quote.package:quote.package),node('td',quote.source==='business-demo'?'Demo / 演示':'Website / 主站'),status,node('td',date(quote.created_at)),action); $('quoteRows').append(tr);
     });

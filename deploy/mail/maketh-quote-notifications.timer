@@ -1,0 +1,11 @@
+[Unit]
+Description=Retry pending Maketh quote notifications every 30 seconds
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=30s
+AccuracySec=1s
+Unit=maketh-quote-notifications.service
+
+[Install]
+WantedBy=timers.target

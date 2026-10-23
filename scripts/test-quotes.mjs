@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { spawn, execFileSync } from 'node:child_process';
+import { spawn, spawnSync, execFileSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { createServer } from 'node:net';
@@ -11,6 +11,7 @@ test('quote submission, authentication, duplicate protection, validation and per
   const socket=createServer();await new Promise(r=>socket.listen(0,'127.0.0.1',r));const port=socket.address().port;await new Promise(r=>socket.close(r));
   const base='http://127.0.0.1:'+port, config=join(directory,'config.json'), access=join(directory,'access.txt');
   execFileSync('php',[join(root,'scripts/provision-quotes.php'),'--config='+config,'--data='+join(directory,'data'),'--access-file='+access,'--origin='+base],{cwd:root});
+  execFileSync('php',[join(root,'scripts/configure-quote-notifications.php'),'--config='+config,'--enabled=1','--sendmail=/__maketh_intentionally_missing_transport__/sendmail'],{cwd:root});
   const password=readFileSync(access,'utf8').match(/Password: (.+)/)[1].trim();
   let server, passed=false;
   async function start(){
@@ -33,6 +34,7 @@ test('quote submission, authentication, duplicate protection, validation and per
     assert.equal((await call(visitor,'create','POST',quote,{'X-CSRF-Token':'bad'})).status,403);
     assert.equal((await call(visitor,'create','POST',quote,{Origin:'https://example.invalid'})).status,403);
     assert.equal((await call(visitor,'create','POST',{...quote,email:'invalid'})).status,422);
+    assert.equal((await call(visitor,'create','POST',{...quote,email:'qa@example.invalid\r\nBcc: other@example.invalid'})).status,422);
     assert.equal((await call(visitor,'create','POST',{...quote,consent:false})).status,422);
     assert.equal((await call(visitor,'create','POST',{...quote,website:'spam'})).status,422);
     const created=await call(visitor,'create','POST',quote);assert.equal(created.status,201);assert(created.body.reference);
@@ -42,11 +44,30 @@ test('quote submission, authentication, duplicate protection, validation and per
     assert.equal((await call(owner,'login','POST',{username:'owner',password:'wrong'})).status,401);
     assert.equal((await call(owner,'login','POST',{username:'owner',password})).status,200);
     const list=await call(owner,'list');assert.equal(list.body.total,1);assert.equal(list.body.quotes[0].message,quote.message);
+    assert.equal(list.body.quotes[0].notification_status,'pending');
+    const demo=await call(visitor,'create','POST',{...quote,source:'business-demo',requestKey:crypto.randomUUID()});
+    assert.equal(demo.status,201);
+    const withDemo=await call(owner,'list');
+    assert.equal(withDemo.body.quotes.find(row=>row.id===demo.body.reference).notification_status,null);
+    const worker=spawnSync('php',[join(root,'scripts/send-quote-notifications.php')],{cwd:root,env:{...process.env,MAKETH_QUOTES_CONFIG:config},encoding:'utf8'});
+    assert.equal(worker.status,1,'An unavailable mail transport must fail visibly');
+    const retry=await call(owner,'list');
+    assert.equal(retry.body.quotes.find(row=>row.id===created.body.reference).notification_status,'retrying');
+    assert.equal(retry.body.quotes.find(row=>row.id===created.body.reference).notification_attempts,1,'Duplicate submissions must not create duplicate notifications');
+    const earlyWorker=spawnSync('php',[join(root,'scripts/send-quote-notifications.php')],{cwd:root,env:{...process.env,MAKETH_QUOTES_CONFIG:config},encoding:'utf8'});
+    assert.equal(earlyWorker.status,0);
+    const notDue=await call(owner,'list');
+    assert.equal(notDue.body.quotes.find(row=>row.id===created.body.reference).notification_attempts,1,'Retry must respect its scheduled delay');
+    execFileSync('php',[join(root,'scripts/configure-quote-notifications.php'),'--config='+config,'--enabled=0'],{cwd:root});
+    const disabled=await call(visitor,'create','POST',{...quote,requestKey:crypto.randomUUID()});
+    assert.equal(disabled.status,201);
+    const disabledList=await call(owner,'list');
+    assert.equal(disabledList.body.quotes.find(row=>row.id===disabled.body.reference).notification_status,null,'Explicitly disabled configuration must keep dashboard-only behavior');
     assert.equal((await call(owner,'update','PATCH',{id:created.body.reference,status:'contacted',notes:'已联系'})).status,200);
     await stop();await start();
     const persisted=await call(owner,'list&status=contacted&q='+created.body.reference);assert.equal(persisted.body.total,1);assert.equal(persisted.body.quotes[0].notes,'已联系');
     assert.equal((await call(owner,'logout','POST',{})).status,200);assert.equal((await call(owner,'list')).status,401);
-    for(const path of ['/scripts/provision-quotes.php','/.codex_tmp/','/confs.txt'])assert.equal((await fetch(base+path)).status,404);
+    for(const path of ['/scripts/provision-quotes.php','/.codex_tmp/','/confs.txt','/deploy/mail/configure.sh','/api/quote-notifications.php'])assert.equal((await fetch(base+path)).status,404);
     passed=true;
   } finally {
     await stop();

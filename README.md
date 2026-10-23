@@ -15,6 +15,7 @@ Company, service and game website for [maketh.au](https://maketh.au), with a PHP
 - `/en/`: compatibility redirect to the English home
 - `/#projects`, `/zh/#projects`: published projects
 - `/services/web-design-brisbane/`, `/zh/services/web-design-brisbane/`: packages
+- `/services/affordable-web-design-australia/` and its `/zh/` counterpart: Australia-wide package comparison, regional delivery information and visible FAQs
 - `/services/app-development-brisbane/`, `/services/ai-receptionist-brisbane/`: other services, with Chinese counterparts under `/zh/`
 - `/examples/starter/`: three-page Still & Form demo (Home, About, Product)
 - `/examples/business/`: six-page Everleaf demo, including a real demo enquiry form
@@ -25,7 +26,7 @@ Company, service and game website for [maketh.au](https://maketh.au), with a PHP
 - `/games/little-tower-defence/`: released game page
 - `/app-ads.txt`: public advertising declaration
 
-Demo brands and project descriptions are illustrative and explicitly labelled. Demo submissions go to DanaTech's real owner dashboard with source `business-demo`. The dashboard is not publicly accessible, and no email notifications are sent.
+Demo brands and project descriptions are illustrative and explicitly labelled. Demo submissions go to DanaTech's real owner dashboard with source `business-demo` and do not generate email. Main-site enquiries create durable owner notifications when explicitly enabled in the private runtime configuration. The advertised $299 customer package remains dashboard-only, without email notifications.
 
 ## Development and verification
 
@@ -71,10 +72,31 @@ Install `deploy/quotes.nginx.conf` in the existing site's extension include dire
 
 For subsequent releases:
 
+When upgrading from a dashboard-only version, first follow the notification
+configuration migration in [the mail runbook](deploy/mail/README.md). Update the
+private configuration before deploying an API that requires explicit notification
+settings. Existing owner credentials and customer records must remain unchanged.
+
 ```bash
 git -C /www/wwwroot/maketh.au pull --ff-only origin main
 ```
 
 Never reprovision, delete or overwrite the production database during a code update. Keep backups of the database and runtime configuration under the server's private backup policy. No customer records, sessions, passwords, database files or credentials belong in Git.
+
+The self-hosted mailbox, authenticated SMTP/IMAP, TLS renewal and main-site
+notification worker are documented in [deploy/mail/README.md](deploy/mail/README.md).
+Owner notifications are durable and retry failed mail submissions; the dashboard
+distinguishes waiting, retrying and accepted-by-mail-server states. MTA acceptance
+is not a guarantee of external inbox placement.
+
+## Search and geographic coverage
+
+The English and Chinese Australia guides contain matching visible package facts,
+FAQs and JSON-LD (Service, Offer, Organization, BreadcrumbList and FAQPage), plus
+canonical URLs, reciprocal hreflang and sitemap entries. Brisbane is the actual
+meeting area; other cities are remote-service coverage, not invented offices.
+“Cheapest” describes our own lowest package or a comparison question, not an
+unverified claim to be Australia's cheapest supplier. There is no ranking or
+AI-answer inclusion guarantee. Demo and private enquiry routes remain noindex.
 
 The owner dashboard supports search, paging, customer details, New/Contacted/Closed status and private notes. Use the private access file for initial sign-in. To rotate the password, generate a new PHP `password_hash` offline and update only `owner_password_hash` in the private config; invalidate existing sessions in a planned maintenance step.

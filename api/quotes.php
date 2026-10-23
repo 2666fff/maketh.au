@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 ini_set('display_errors', '0');
+define('MAKETH_QUOTE_INTERNAL', true);
+require __DIR__ . '/quote-notifications.php';
 
 // Runtime secrets and customer data live outside the public document root.
 header('Content-Type: application/json; charset=utf-8');
@@ -50,6 +52,8 @@ try {
     if (empty($config['allowed_origins']) || !is_array($config['allowed_origins'])) throw new RuntimeException('Missing allowed origins');
     $db = new PDO('sqlite:' . $config['database'], null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
     $db->exec('PRAGMA busy_timeout = 5000');
+    $notificationSettings = quoteNotificationSettings($config);
+    quoteNotificationSchema($db);
     session_save_path($config['session_dir']);
     ini_set('session.use_strict_mode', '1');
     ini_set('session.gc_maxlifetime', '28800');
@@ -114,8 +118,18 @@ try {
         if ($id = $existing->fetchColumn()) respond(200, ['reference' => $id, 'saved' => true]);
         limitRequests($db, 'quote:' . $ipKey, 20, 3600);
         $id = strtoupper(bin2hex(random_bytes(6)));
-        $db->prepare('INSERT INTO quotes(id, created_at, updated_at, name, email, phone, business, package, source, message, request_key) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-            ->execute([$id, gmdate('Y-m-d\TH:i:s\Z'), gmdate('Y-m-d\TH:i:s\Z'), $name, $email, $phone, $business, $package, $source, $message, $dedupe]);
+        $db->beginTransaction();
+        try {
+            $db->prepare('INSERT INTO quotes(id, created_at, updated_at, name, email, phone, business, package, source, message, request_key) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+                ->execute([$id, gmdate('Y-m-d\TH:i:s\Z'), gmdate('Y-m-d\TH:i:s\Z'), $name, $email, $phone, $business, $package, $source, $message, $dedupe]);
+            if ($source === 'main' && $notificationSettings['enabled']) {
+                $db->prepare('INSERT INTO quote_notifications(quote_id, next_attempt_at) VALUES (?, ?)')->execute([$id, time()]);
+            }
+            $db->commit();
+        } catch (Throwable $error) {
+            $db->rollBack();
+            throw $error;
+        }
         respond(201, ['reference' => $id, 'saved' => true]);
     }
     if (!$owner) respond(401, ['error' => 'Please sign in to view enquiries.']);
@@ -129,7 +143,7 @@ try {
         $params = [$status, $status, $search, $search];
         $count = $db->prepare('SELECT count(*) FROM quotes ' . $where);
         $count->execute($params);
-        $rows = $db->prepare('SELECT id, created_at, updated_at, name, email, phone, business, package, source, message, status, notes FROM quotes ' . $where . ' ORDER BY created_at DESC, rowid DESC LIMIT 25 OFFSET ' . (($page - 1) * 25));
+        $rows = $db->prepare('SELECT id, created_at, updated_at, name, email, phone, business, package, source, message, status, notes, (SELECT state FROM quote_notifications WHERE quote_id = quotes.id) AS notification_status, (SELECT attempts FROM quote_notifications WHERE quote_id = quotes.id) AS notification_attempts FROM quotes ' . $where . ' ORDER BY created_at DESC, rowid DESC LIMIT 25 OFFSET ' . (($page - 1) * 25));
         $rows->execute($params);
         $counts = ['new' => 0, 'contacted' => 0, 'closed' => 0];
         foreach ($db->query('SELECT status, count(*) AS count FROM quotes GROUP BY status') as $row) $counts[$row['status']] = (int) $row['count'];

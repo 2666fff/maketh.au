@@ -2,28 +2,28 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://maketh.au/</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-24</lastmod>
     <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/" />
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/" />
   </url>
   <url>
     <loc>https://maketh.au/zh/</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-24</lastmod>
     <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/" />
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/" />
   </url>
   <url>
     <loc>https://maketh.au/services/web-design-brisbane/</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-24</lastmod>
     <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/services/web-design-brisbane/" />
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/services/web-design-brisbane/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/services/web-design-brisbane/" />
   </url>
   <url>
     <loc>https://maketh.au/zh/services/web-design-brisbane/</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-24</lastmod>
     <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/services/web-design-brisbane/" />
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/services/web-design-brisbane/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/services/web-design-brisbane/" />
@@ -56,6 +56,20 @@
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/services/ai-receptionist-brisbane/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/services/ai-receptionist-brisbane/" />
   </url>
-  <url><loc>https://maketh.au/privacy/</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://maketh.au/privacy/</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://maketh.au/games/little-tower-defence/</loc><lastmod>2026-07-23</lastmod></url>
+  <url>
+    <loc>https://maketh.au/services/affordable-web-design-australia/</loc>
+    <lastmod>2026-10-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/services/affordable-web-design-australia/" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/services/affordable-web-design-australia/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/services/affordable-web-design-australia/" />
+  </url>
+  <url>
+    <loc>https://maketh.au/zh/services/affordable-web-design-australia/</loc>
+    <lastmod>2026-10-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://maketh.au/services/affordable-web-design-australia/" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://maketh.au/zh/services/affordable-web-design-australia/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://maketh.au/services/affordable-web-design-australia/" />
+  </url>
 </urlset>

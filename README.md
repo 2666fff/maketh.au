@@ -95,8 +95,12 @@ The English and Chinese Australia guides contain matching visible package facts,
 FAQs and JSON-LD (Service, Offer, Organization, BreadcrumbList and FAQPage), plus
 canonical URLs, reciprocal hreflang and sitemap entries. Brisbane is the actual
 meeting area; other cities are remote-service coverage, not invented offices.
-“Cheapest” describes our own lowest package or a comparison question, not an
-unverified claim to be Australia's cheapest supplier. There is no ranking or
-AI-answer inclusion guarantee. Demo and private enquiry routes remain noindex.
+Keep sales copy concise: package facts live in their cards; detailed remote city
+coverage lives in the Australia guide. Do not repeat city lists, invent offices
+or claim an unverified market-wide lowest price. FAQs must match visible answers
+exactly. Tests check each tier's visible scope, device adaptation and exclusions.
+There is no ranking or AI-answer inclusion guarantee. Demo and private enquiry
+routes remain noindex. Submit `https://maketh.au/sitemap.xml` in Search Console;
+it contains the 12 canonical public URLs, not alternate HTTP/www variants.
 
 The owner dashboard supports search, paging, customer details, New/Contacted/Closed status and private notes. Use the private access file for initial sign-in. To rotate the password, generate a new PHP `password_hash` offline and update only `owner_password_hash` in the private config; invalidate existing sessions in a planned maintenance step.

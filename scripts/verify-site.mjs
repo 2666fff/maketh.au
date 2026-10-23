@@ -193,14 +193,15 @@ const majorAustralianCities = [
 
 for (const relativePath of websiteSalesPages) {
   const html = readFileSync(join(root, relativePath), 'utf8');
-  for (const fact of ['$199', '$299', '$888', 'Mount Gravatt', 'Sunnybank', 'Eight Mile Plains', ...majorAustralianCities]) {
-    if (!html.includes(fact)) failures.push(`${relativePath} is missing website sales fact ${fact}`);
+  const visible = visibleText(html);
+  for (const fact of ['$199', '$299', '$888', 'Mount Gravatt', 'Sunnybank', 'Eight Mile Plains', 'Brisbane', 'Sydney', 'Melbourne', 'Perth', 'Western Australia']) {
+    if (!visible.includes(fact)) failures.push(`${relativePath} is missing visible website sales fact ${fact}`);
   }
   if (!/Australia|全澳/.test(html)) failures.push(`${relativePath} is missing Australia-wide service coverage`);
   if (!/meetings? (?:across|anywhere in) Brisbane|Brisbane[^<]{0,40}(?:meeting|面谈)|整个 Brisbane/i.test(html)) {
     failures.push(`${relativePath} is missing Brisbane-wide meeting coverage`);
   }
-  if (!/10\s+(?:content\s+)?pages|10\s*页/i.test(html)) failures.push(`${relativePath} is missing the 299 package page limit`);
+  if (!/10\s+(?:(?:client-supplied|content)\s+)*pages|10\s*(?:个[^<]{0,20}页面|页)/i.test(visible)) failures.push(`${relativePath} is missing the 299 package page limit`);
   for (const marker of ['.com.au', '.au', 'Home', 'About', 'Product', '/examples/starter/', '/examples/business/']) {
     if (!html.includes(marker)) failures.push(`${relativePath} is missing package fact/link ${marker}`);
   }
@@ -213,9 +214,6 @@ for (const relativePath of websiteSalesPages) {
 
 for (const relativePath of ['index.html', 'services/web-design-brisbane/index.html']) {
   const html = readFileSync(join(root, relativePath), 'utf8');
-  if (!/cheapest website design for your needs|Maketh.s cheapest/i.test(html)) {
-    failures.push(`${relativePath} is missing qualified lowest-price comparison language`);
-  }
   if (!/business and personal|personal and business|individuals and businesses/i.test(html)) {
     failures.push(`${relativePath} is missing business and personal customer language`);
   }
@@ -291,10 +289,41 @@ for (const route of guideRoutes) {
   for (const faq of faqs) {
     if (!html.includes(`<summary>${faq.name}</summary><p>${faq.acceptedAnswer.text}</p>`)) failures.push(`${route} FAQ structured data differs from visible answer`);
   }
-  if (!/not claim to be the cheapest|不声称是全澳最便宜/.test(html)) failures.push(`${route} missing lowest-price comparison qualification`);
+  for (const city of majorAustralianCities) {
+    if (!visibleText(html).includes(city)) failures.push(`${route} missing visible Australia-wide coverage ${city}`);
+  }
   if (!/email notifications are not included|套餐不包含邮件通知/.test(html)) failures.push(`${route} incorrectly includes email in the 299 package`);
   if (!/domain quoted separately|域名另行报价/.test(html)) failures.push(`${route} must state the 888 domain boundary`);
   if (!/other locations are served remotely|其他地区以远程方式服务/.test(html)) failures.push(`${route} missing real location boundary`);
+}
+
+// Approved sales scope must be visible in each tier, not only in JSON-LD or hero copy.
+for (const relativePath of [...websiteSalesPages, ...guideRoutes.map(route => route + 'index.html')]) {
+  const html = readFileSync(join(root, relativePath), 'utf8');
+  const cards = [...html.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)].map(match => match[0]);
+  for (const price of ['199', '299', '888']) {
+    const card = cards.find(item => new RegExp(`<strong[^>]*><small>AUD<\\/small>\\s*\\$${price}<\\/strong>`).test(item));
+    if (!card) { failures.push(`${relativePath} missing package card ${price}`); continue; }
+    const text = visibleText(card);
+    if (!/Desktop and mobile|电脑版及移动版/i.test(text)) failures.push(`${relativePath} ${price} missing desktop/mobile adaptation`);
+    if (!/source[- ]code|source code|源码/i.test(text)) failures.push(`${relativePath} ${price} missing source handover`);
+    if (price === '199' && !['Home', 'About', 'Product', '.com.au', '.au'].every(fact => text.includes(fact))) failures.push(`${relativePath} 199 missing approved pages/domain`);
+    if (price === '299' && !/10\b/.test(text)) failures.push(`${relativePath} 299 missing page limit in card`);
+    if (price === '299' && !/dashboard|后台/i.test(text)) failures.push(`${relativePath} 299 missing quote management`);
+    if (price === '888' && (!/registration and login|用户注册及登录/i.test(text) || !/Basic data query|基础数据查询/i.test(text))) failures.push(`${relativePath} 888 missing accounts/query scope`);
+  }
+  const visible = visibleText(html);
+  if (!/renewal|续费/i.test(visible) || !/eligib|资格/i.test(visible)) failures.push(`${relativePath} missing renewal/domain conditions`);
+  if (!/email notifications are not included|套餐不包含邮件通知/i.test(visible)) failures.push(`${relativePath} must not include email notifications in the 299 tier`);
+  if (/we are (?:the )?cheapest|Australia.s cheapest|全澳最便宜的供应商/i.test(visible)) failures.push(`${relativePath} has an unsupported market-wide lowest-price claim`);
+  const graph = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])['@graph'];
+  const structuredFaqs = graph.find(node => node['@type'] === 'FAQPage')?.mainEntity || [];
+  const visibleFaqs = [...html.matchAll(/<details><summary>([^<]+)<\/summary><p>([^<]+)<\/p><\/details>/g)];
+  if (structuredFaqs.length !== visibleFaqs.length || structuredFaqs.some((faq, i) => faq.name !== visibleFaqs[i]?.[1] || faq.acceptedAnswer.text !== visibleFaqs[i]?.[2])) failures.push(`${relativePath} FAQ schema must exactly match visible questions and answers`);
+}
+
+function visibleText(html) {
+  return html.replace(/<script\b[\s\S]*?<\/script>|<style\b[\s\S]*?<\/style>|<head\b[\s\S]*?<\/head>/gi, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 if (failures.length > 0) {

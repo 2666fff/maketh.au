@@ -18,6 +18,7 @@ const contentTypes = new Map([
   ['.js', 'text/javascript; charset=utf-8'],
   ['.json', 'application/json; charset=utf-8'],
   ['.png', 'image/png'],
+  ['.svg', 'image/svg+xml'],
   ['.txt', 'text/plain; charset=utf-8'],
   ['.webp', 'image/webp'],
   ['.xml', 'application/xml; charset=utf-8']
@@ -26,6 +27,9 @@ const contentTypes = new Map([
 createServer((request, response) => {
   try {
     const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
+    if (/\.(?:php|sqlite|ini)$/.test(pathname) || /^\/(?:api|admin|\.git|\.codex_tmp|confs\.txt|maketh\.au_key|codex_temp\.txt)(?:\/|$)/.test(pathname)) {
+      return sendError(response, 403, 'Use the full PHP preview for the enquiry system.');
+    }
     let filePath = resolve(root, `.${pathname}`);
 
     if (filePath !== root && !filePath.startsWith(`${root}${sep}`)) {

@@ -15,11 +15,17 @@ const requiredPages = [
   'zh/services/app-development-brisbane/index.html',
   'zh/services/ai-receptionist-brisbane/index.html',
   'privacy/index.html',
-  'games/little-tower-defence/index.html'
+  'games/little-tower-defence/index.html',
+  'quote/index.html', 'admin/index.html',
+  'examples/starter/index.html', 'examples/starter/about/index.html', 'examples/starter/product/index.html',
+  ...['', 'about/', 'services/', 'projects/', 'guide/', 'quote/'].map(page => `examples/business/${page}index.html`)
 ];
 const requiredAssets = [
   'assets/danatech/company.css',
   'assets/danatech/company.js',
+  'assets/danatech/quote.css', 'assets/danatech/quote.js', 'assets/danatech/admin.js',
+  'examples/assets/demo.css', 'examples/assets/demo.js',
+  ...['still-life', 'garden', 'vase', 'bowl', 'lamp'].map(name => `examples/assets/${name}.svg`),
   'assets/danatech/danatech-game-og.webp',
   'assets/danatech/danatech-services-og.png',
   'assets/danatech/danatech-icon.png',
@@ -70,7 +76,7 @@ for (const file of textFiles) {
   }
 }
 
-for (const relativePath of requiredPages.slice(1)) {
+for (const relativePath of requiredPages) {
   const html = readFileSync(join(root, relativePath), 'utf8');
   if (!html.includes('DanaTech')) failures.push(`${relativePath} is missing the DanaTech company name`);
 
@@ -124,7 +130,7 @@ for (const relativePath of indexableCompanyPages) {
 
 for (const relativePath of ['index.html', 'zh/index.html']) {
   const html = readFileSync(join(root, relativePath), 'utf8');
-  for (const fact of ['$299', '$399', '$500']) {
+  for (const fact of ['$199', '$299', '$888', '$500']) {
     if (!html.includes(fact)) failures.push(`${relativePath} is missing confirmed price ${fact}`);
   }
   if (!/source code|源码/i.test(html)) failures.push(`${relativePath} is missing the source-code handover promise`);
@@ -181,16 +187,20 @@ const majorAustralianCities = [
 
 for (const relativePath of websiteSalesPages) {
   const html = readFileSync(join(root, relativePath), 'utf8');
-  for (const fact of ['$299', '$399', 'Mount Gravatt', 'Sunnybank', 'Eight Mile Plains', ...majorAustralianCities]) {
+  for (const fact of ['$199', '$299', '$888', 'Mount Gravatt', 'Sunnybank', 'Eight Mile Plains', ...majorAustralianCities]) {
     if (!html.includes(fact)) failures.push(`${relativePath} is missing website sales fact ${fact}`);
   }
   if (!/Australia|全澳/.test(html)) failures.push(`${relativePath} is missing Australia-wide service coverage`);
   if (!/meetings? (?:across|anywhere in) Brisbane|Brisbane[^<]{0,40}(?:meeting|面谈)|整个 Brisbane/i.test(html)) {
     failures.push(`${relativePath} is missing Brisbane-wide meeting coverage`);
   }
-  if (!/10\s+(?:content\s+)?pages|10\s*页/i.test(html) || !/30\s+(?:content\s+)?pages|30\s*页/i.test(html)) {
-    failures.push(`${relativePath} is missing the confirmed 10-page and 30-page package limits`);
+  if (!/10\s+(?:content\s+)?pages|10\s*页/i.test(html)) failures.push(`${relativePath} is missing the 299 package page limit`);
+  for (const marker of ['.com.au', '.au', 'Home', 'About', 'Product', '/examples/starter/', '/examples/business/']) {
+    if (!html.includes(marker)) failures.push(`${relativePath} is missing package fact/link ${marker}`);
   }
+  if (!/Sydney server hosting for 12 months|悉尼服务器 12 个月/.test(html)) failures.push(`${relativePath} is missing the 199 Sydney hosting inclusion`);
+  if (!/User registration and login|用户注册及登录/.test(html) || !/Basic data query|基础数据查询/.test(html)) failures.push(`${relativePath} is missing the 888 account/query scope`);
+  if (/\$399|399\s*澳元|"price":"399"/.test(html)) failures.push(`${relativePath} still advertises the removed 399 package`);
   if (/\$300\b|300\s*澳元/.test(html)) failures.push(`${relativePath} contains the superseded $300 website price`);
   if (!html.includes('data-reveal=')) failures.push(`${relativePath} is missing scroll-reveal anchors`);
 }

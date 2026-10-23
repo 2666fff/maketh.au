@@ -9,6 +9,9 @@
 *.mjs text eol=lf
 *.txt text eol=lf
 *.xml text eol=lf
+*.php text eol=lf
+*.conf text eol=lf
+*.svg text eol=lf
 
 *.png binary
 *.webp binary

@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "serve": "node scripts/serve.mjs",
-    "test": "node scripts/verify-site.mjs"
+    "serve:full": "php -S 127.0.0.1:4173 scripts/preview.php",
+    "test": "node scripts/verify-site.mjs",
+    "test:quotes": "node --test scripts/test-quotes.mjs"
   },
   "engines": {
     "node": ">=18.19.0"

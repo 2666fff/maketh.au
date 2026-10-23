@@ -1999,6 +1999,27 @@ footer {
   color: var(--yellow);
 }
 
+.live-demo-stage { min-width: 0; padding: 24px 0; }
+.live-demo-preview { display: block; overflow: hidden; border: 1px solid #b7b3a3; background: #f4eddf; color: #263d2d; text-decoration: none; box-shadow: 15px 18px 0 rgba(19, 47, 33, .1); }
+.live-demo-preview > span { display: block; padding: 14px 20px; background: #263d2d; color: #fff; font-size: 11px; letter-spacing: .1em; font-weight: 800; }
+.live-demo-preview img { display: block; width: 100%; height: auto; max-height: 330px; object-fit: cover; }
+.live-demo-preview > strong { display: flex; justify-content: space-between; padding: 20px 22px 8px; font: 700 23px Georgia, serif; letter-spacing: .08em; }
+.live-demo-preview > small { display: block; padding: 0 22px 22px; font-size: 12px; }
+.live-demo-secondary { display: flex; justify-content: space-between; gap: 20px; align-items: center; margin-top: 28px; padding: 18px; background: #e6edd7; border: 1px solid #bac7aa; color: #223e2a; font-size: 13px; font-weight: 700; }
+.website-price-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+.website-price-grid .price-plan { padding: 28px; }
+.additional-price-grid { margin-top: 30px; }
+.price-plan-starter, .service-package-starter, .offer-panel-starter { background: #e4edcf; }
+.service-package-starter { grid-column: 1 / -1; min-height: 0 !important; }
+.service-package-starter ul { grid-template-columns: 1fr 1fr; column-gap: 30px; }
+.demo-link { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 26px 0 14px !important; padding: 14px 16px !important; min-height: 48px; background: #203b2d; color: #fff; font-size: 13px; font-weight: 800; }
+.demo-link:hover, .demo-link:focus-visible { background: #355641 !important; color: #fff !important; }
+.offer-panel-starter a { display: inline-block; margin-top: 22px; text-decoration: underline; font-weight: 800; }
+.email-handoff-note { font-size: 13px !important; line-height: 1.8; }
+.hero-proof dd { overflow-wrap: anywhere; }
+@media (max-width: 1080px) { .website-price-grid { grid-template-columns: 1fr !important; } .website-price-grid .price-plan { min-height: 0; } .service-package-starter ul { grid-template-columns: 1fr; } }
+@media (max-width: 680px) { .live-demo-preview { box-shadow: 7px 8px 0 rgba(19,47,33,.1); } .live-demo-preview img { max-height: 300px; } }
+
 .pricing {
   background: var(--white);
 }

@@ -11,7 +11,22 @@ test('quote submission, authentication, duplicate protection, validation and per
   const socket=createServer();await new Promise(r=>socket.listen(0,'127.0.0.1',r));const port=socket.address().port;await new Promise(r=>socket.close(r));
   const base='http://127.0.0.1:'+port, config=join(directory,'config.json'), access=join(directory,'access.txt');
   execFileSync('php',[join(root,'scripts/provision-quotes.php'),'--config='+config,'--data='+join(directory,'data'),'--access-file='+access,'--origin='+base],{cwd:root});
-  execFileSync('php',[join(root,'scripts/configure-quote-notifications.php'),'--config='+config,'--enabled=1','--sendmail=/__maketh_intentionally_missing_transport__/sendmail'],{cwd:root});
+  const provisioned=JSON.parse(readFileSync(config,'utf8'));
+  const configure=(...args)=>spawnSync('php',[join(root,'scripts/configure-quote-notifications.php'),'--config='+config,...args],{cwd:root,encoding:'utf8'});
+  assert.notEqual(configure('--enabled=1').status,0,'Initial setup requires an explicit recipient');
+  assert.deepEqual(JSON.parse(readFileSync(config,'utf8')),provisioned,'Rejected configuration must not change any settings');
+  assert.equal(configure('--enabled=1','--to=owner@example.invalid','--sendmail=/__maketh_intentionally_missing_transport__/sendmail').status,0);
+  const configured=JSON.parse(readFileSync(config,'utf8'));
+  assert.equal(configured.notifications.from,'admin@maketh.au');
+  assert.equal(configured.notifications.to,'owner@example.invalid');
+  assert.deepEqual({...configured,notifications:provisioned.notifications},provisioned,'Owner credentials and unrelated configuration must be preserved');
+  assert.equal(configure('--enabled=1','--to=another-owner@example.invalid').status,0);
+  assert.equal(configure('--enabled=1').status,0,'Rerunning migration keeps the explicit route');
+  const redirected=JSON.parse(readFileSync(config,'utf8'));
+  assert.equal(redirected.notifications.to,'another-owner@example.invalid');
+  assert.equal(redirected.notifications.sendmail,configured.notifications.sendmail);
+  assert.notEqual(configure('--enabled=0','--to=invalid-address').status,0,'Invalid recipients must be rejected even when disabled');
+  assert.deepEqual(JSON.parse(readFileSync(config,'utf8')),redirected);
   const password=readFileSync(access,'utf8').match(/Password: (.+)/)[1].trim();
   let server, passed=false;
   async function start(){
@@ -59,6 +74,7 @@ test('quote submission, authentication, duplicate protection, validation and per
     const notDue=await call(owner,'list');
     assert.equal(notDue.body.quotes.find(row=>row.id===created.body.reference).notification_attempts,1,'Retry must respect its scheduled delay');
     execFileSync('php',[join(root,'scripts/configure-quote-notifications.php'),'--config='+config,'--enabled=0'],{cwd:root});
+    assert.deepEqual(JSON.parse(readFileSync(config,'utf8')).notifications,{...redirected.notifications,enabled:false},'Disabling must retain sender, recipient and transport');
     const disabled=await call(visitor,'create','POST',{...quote,requestKey:crypto.randomUUID()});
     assert.equal(disabled.status,201);
     const disabledList=await call(owner,'list');

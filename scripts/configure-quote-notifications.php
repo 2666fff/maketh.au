@@ -3,13 +3,23 @@ declare(strict_types=1);
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 define('MAKETH_QUOTE_INTERNAL', true);
 require __DIR__ . '/../api/quote-notifications.php';
-$options = getopt('', ['config:', 'enabled:', 'sendmail:']);
+$options = getopt('', ['config:', 'enabled:', 'to:', 'sendmail:']);
 if (!isset($options['config'], $options['enabled']) || !in_array($options['enabled'], ['0', '1'], true)) throw new RuntimeException('Use --config=PATH --enabled=0|1');
 $path = realpath($options['config']);
 if (!$path || is_link($options['config'])) throw new RuntimeException('Existing regular config required');
 $config = json_decode(file_get_contents($path), true, 16, JSON_THROW_ON_ERROR);
-$config['notifications'] = ['enabled' => $options['enabled'] === '1', 'from' => 'admin@maketh.au', 'to' => 'admin@maketh.au', 'sendmail' => $options['sendmail'] ?? '/usr/sbin/sendmail'];
-quoteNotificationSettings($config);
+$previous = $config['notifications'] ?? [];
+$recipient = $options['to'] ?? $previous['to'] ?? null;
+if ($recipient === null) throw new RuntimeException('Specify --to=OWNER_EMAIL for initial notification setup');
+$settings = [
+    'enabled' => $options['enabled'] === '1',
+    'from' => 'admin@maketh.au',
+    'to' => $recipient,
+    'sendmail' => $options['sendmail'] ?? $previous['sendmail'] ?? '/usr/sbin/sendmail',
+];
+// Validate addresses even when disabling; toggling must not erase the delivery route.
+quoteNotificationSettings(['notifications' => array_replace($settings, ['enabled' => true])]);
+$config['notifications'] = $settings;
 $db = new PDO('sqlite:' . $config['database'], null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 $db->exec('PRAGMA busy_timeout = 5000');
 quoteNotificationSchema($db);

@@ -2,6 +2,8 @@
 
 Run as root with --reference=REFERENCE --source=main|business-demo. Prints no
 credentials or customer content. The quote and test email are retained.
+For an external recipient use --outbox-only, then independently verify actual
+receipt in that recipient's mailbox; outbox evidence is not delivery evidence.
 """
 import argparse
 import email
@@ -17,6 +19,7 @@ import time
 parser = argparse.ArgumentParser()
 parser.add_argument('--reference', required=True)
 parser.add_argument('--source', choices=['main', 'business-demo'], required=True)
+parser.add_argument('--outbox-only', action='store_true', help='Verify persistence/MTA acceptance only; external mailbox receipt must be checked separately')
 args = parser.parse_args()
 assert re.fullmatch(r'[A-Z0-9-]+', args.reference), 'Invalid reference'
 config = json.loads(Path('/etc/maketh-quotes/config.json').read_text())
@@ -35,6 +38,10 @@ assert notification and notification['state'] == 'queued', 'MTA acceptance not r
 assert notification['attempts'] >= 1 and notification['queued_at']
 print('PASS outbox accepted by MTA; attempts=' + str(notification['attempts']))
 message_id = '<quote-' + args.reference.lower() + '@maketh.au>'
+if args.outbox_only:
+    print('DELIVERY NOT VERIFIED: check recipient mailbox for Message-ID ' + message_id)
+    raise SystemExit(0)
+assert config['notifications']['to'] == 'admin@maketh.au', 'External recipient configured: use --outbox-only and verify the actual recipient mailbox separately'
 password = Path('/etc/maketh-mail/admin-password').read_text().strip()
 with imaplib.IMAP4_SSL('mail.maketh.au', 993, ssl_context=ssl.create_default_context(), timeout=20) as mailbox:
     mailbox.login('admin@maketh.au', password)

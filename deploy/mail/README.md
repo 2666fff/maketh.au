@@ -78,11 +78,14 @@ Use a new directory name. Keep this backup private and retain it after rollout.
 
    ```sh
    /www/server/php/84/bin/php /private/deployment/scripts/configure-quote-notifications.php \
-     --config=/etc/maketh-quotes/config.json --enabled=1
+     --config=/etc/maketh-quotes/config.json --enabled=1 --to=OWNER_EMAIL
    ```
 
    It preserves the owner credentials and existing enquiries, adds the outbox
-   table and atomically updates only the notification settings. Check config
+   table and atomically updates only the notification settings. Initial setup
+   requires an explicit recipient; subsequent runs preserve the recipient and
+   sendmail path unless supplied again. The sender remains `admin@maketh.au`.
+   Check config
    remains `root:www` 640 and SQLite/runtime files remain owned by `www`.
 3. Fast-forward the production `main` checkout. Never reprovision the database.
 4. Install the included systemd service/timer:
@@ -95,12 +98,15 @@ Use a new directory name. Keep this backup private and retain it after rollout.
    ```
 
 5. Submit an identified test enquiry through `/quote/`. Verify the same reference
-   in the private dashboard, outbox, Postfix/LMTP logs and owner mailbox. Confirm
+   in the private dashboard, outbox, Postfix delivery logs and recipient mailbox. Confirm
    the demo has no outbox row. Do not substitute a database insert for this test.
    `python3 deploy/mail/verify-quote.py --reference=REFERENCE --source=main`
    checks the saved record and actual TLS IMAP message, including its content,
    Reply-To and DKIM signature, without printing customer data. Use
-   `--source=business-demo` for the dashboard-only demo check.
+   `--source=business-demo` for the dashboard-only demo check. For an external
+   recipient, use `--outbox-only` and independently inspect that recipient's
+   mailbox for the matching Message-ID, sender, recipient, complete enquiry and
+   Reply-To. The outbox-only check explicitly does not establish delivery.
 
 The API saves enquiry and outbox in one transaction. The worker uses a file lock,
 submits up to 10 due messages per run, and retries failed submissions with a
@@ -112,8 +118,24 @@ before SQLite acknowledgement can resubmit a message with the same Message-ID.
 Postfix handles subsequent delivery attempts and bounces; inspect its queue too.
 
 Notifications contain the enquiry details and a customer Reply-To address, sent
-only to the owner. They do not send an automatic email to the customer. Main-site
-notifications are local mailbox deliveries and do not rely on Gmail placement.
+only to the configured owner address. They do not send an automatic email to the
+customer. Production main-site notifications use `admin@maketh.au` as sender and
+the owner's explicitly configured Gmail address as recipient. The worker runs
+every 30 seconds; backend records are saved immediately, even if delivery retries.
+Changing the recipient does not resend previously queued notifications. Any pending
+or retrying item uses the recipient configured when it is processed, so inspect
+the queue before switching. External delivery may be delayed or classified as spam.
+
+To change the existing recipient, take a private snapshot as above, then run:
+
+```sh
+/www/server/php/84/bin/php scripts/configure-quote-notifications.php \
+  --config=/etc/maketh-quotes/config.json --enabled=1 --to=OWNER_EMAIL
+```
+
+Keep the actual personal recipient in the private runtime configuration, not in Git.
+Verify config ownership/mode and unrelated fields are unchanged; keep the rollback
+snapshot. Never reset the enquiry database or replay historical enquiries to test.
 
 ## Operations and recovery
 
